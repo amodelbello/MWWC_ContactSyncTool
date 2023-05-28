@@ -1,5 +1,5 @@
 [project]
-name = "mwwc_contact_sync_tool"
+name = "mwwc_sync_contacts"
 version = "1.0.0"
 dependencies = [
     "flask",
