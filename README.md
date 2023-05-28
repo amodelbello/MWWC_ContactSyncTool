@@ -9,7 +9,7 @@ pip install -r requirements.txt
 
 ## Start the development server
 ```bash
-flask --app app --debug run
+python -m flask --app src/app run --debug
 ```
 
 ## Run tests
