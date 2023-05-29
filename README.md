@@ -10,7 +10,7 @@ pip install -r requirements.txt
 
 ## Start the development server
 ```bash
-python -m flask --app mwwc_sync_contacts/app run --debug
+./dev_server.sh
 ```
 
 ## Run tests
