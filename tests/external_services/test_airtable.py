@@ -5,6 +5,12 @@ from mwwc_sync_contacts.external_services.airtable import get_banana_data
 
 sys.path.append("...")
 
+config_fixture = {
+    "AIRTABLE_API_KEY": "api_key",
+    "AIRTABLE_BASE_ID": "base_id",
+    "AIRTABLE_TABLE_ID": "table_id",
+}
+
 
 def test_get_banana_data(monkeypatch):
     data = "{'some': 'data'}"
@@ -13,7 +19,7 @@ def test_get_banana_data(monkeypatch):
         return data
 
     monkeypatch.setattr(Table, "all", mockreturn)
-    assert get_banana_data() == data
+    assert get_banana_data(config_fixture) == data
 
 
 def test_get_banana_data_exception(monkeypatch):
@@ -24,4 +30,4 @@ def test_get_banana_data_exception(monkeypatch):
 
     monkeypatch.setattr(Table, "all", mockreturn)
     with pytest.raises(Exception, match=error):
-        get_banana_data()
+        get_banana_data(config_fixture)

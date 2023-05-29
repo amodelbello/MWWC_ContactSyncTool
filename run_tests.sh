@@ -1,1 +1,1 @@
-python -m pytest --cov=src --cov-report html
+python -m pytest --cov=mwwc_sync_contacts --cov-report html

@@ -1,7 +1,6 @@
 import sys
 import pytest
-from mwwc_sync_contacts.external_services import airtable
-from mwwc_sync_contacts.app import index, sync_contacts
+import mwwc_sync_contacts
 from mwwc_sync_contacts import create_app
 
 sys.path.append("..")
@@ -9,17 +8,8 @@ sys.path.append("..")
 
 @pytest.fixture()
 def app():
-    app = create_app(
-        {
-            "TESTING": True,
-        }
-    )
-
-    # other setup can go here
-
+    app = create_app()
     yield app
-
-    # clean up / reset resources here
 
 
 @pytest.fixture()
@@ -27,27 +17,28 @@ def client(app):
     return app.test_client()
 
 
-def test_index():
-    data = index()
-    assert "The UI goes here." in data
+def test_index(client):
+    response = client.get("/")
+    assert b"The UI goes here." in response.data
 
 
 def test_sync_contacts(client, monkeypatch):
-    data = "{'some': 'data'}"
+    data = "some data"
 
     def mockreturn(*args, **kwargs):
         return data
 
-    monkeypatch.setattr(airtable, "get_banana_data", mockreturn)
-    assert client.get("/sync_contacts") == data
+    monkeypatch.setattr(mwwc_sync_contacts, "get_banana_data", mockreturn)
+    request = client.get("/sync-contacts")
+    assert bytes(data, "utf-8") in request.data
 
 
-def test_get_banana_data_exception(monkeypatch):
+def test_sync_contacts_airtable_exception(monkeypatch, client):
     error = "Something went wrong"
 
     def mockreturn(*args, **kwargs):
         raise Exception(error)
 
-    monkeypatch.setattr(airtable, "get_banana_data", mockreturn)
-    with pytest.raises(Exception, match=error):
-        sync_contacts()
+    monkeypatch.setattr(mwwc_sync_contacts, "get_banana_data", mockreturn)
+    response = client.get("/sync-contacts")
+    assert bytes(error, "utf-8") in response.data

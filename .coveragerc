@@ -1,5 +1,2 @@
 [run]
-omit = src/tests/*
-
-[pytest]
-addopts = --cov=src --cov-report=html
+omit = mwwc_sync_contacts/tests/*

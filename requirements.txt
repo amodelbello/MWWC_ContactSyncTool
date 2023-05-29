@@ -1,3 +1,4 @@
+appnope==0.1.3
 asttokens==2.2.1
 backcall==0.2.0
 blinker==1.6.2
@@ -19,7 +20,7 @@ Jinja2==3.1.2
 MarkupSafe==2.1.2
 matplotlib-inline==0.1.6
 mccabe==0.7.0
--e git+ssh://git@github.com/amodelbello/MWWC_ContactSyncTool.git@3c5666da4cda3c04db7f9d6bc2ddf10a06db4cac#egg=mwwc_sync_contacts
+-e git+ssh://git@github.com/amodelbello/mwwc_sync_contacts.git@be8bcbc7fed4c6b95dc12af86a2c1a3a5cfa8d69#egg=mwwc_sync_contacts
 packaging==23.1
 parso==0.8.3
 pexpect==4.8.0
