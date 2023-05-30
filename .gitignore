@@ -6,3 +6,5 @@ README.md.tmp
 *.egg-info
 .coverage
 htmlcov
+instance
+gcp_creds

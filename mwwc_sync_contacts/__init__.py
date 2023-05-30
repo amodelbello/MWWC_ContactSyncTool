@@ -1,9 +1,14 @@
 from flask import Flask, jsonify
 from dotenv import load_dotenv
 import os
+from pathlib import Path
 from mwwc_sync_contacts.external_services.airtable import get_banana_data
 
 load_dotenv()
+
+
+def get_project_root() -> Path:
+    return Path(__file__).parent.parent
 
 
 def create_app():
