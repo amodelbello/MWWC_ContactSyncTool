@@ -1,7 +1,4 @@
-import sys
 from pyairtable import Table
-
-sys.path.append("...")
 
 
 def get_banana_data(c):
