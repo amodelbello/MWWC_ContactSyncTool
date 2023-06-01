@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 from mwwc_sync_contacts.external_services.airtable import get_banana_data
+from mwwc_sync_contacts.external_services.google import get_google_workspace_client
+from mwwc_sync_contacts.data_transformation.google import sync_google_workspace
 
 load_dotenv()
 
@@ -30,7 +32,9 @@ def create_app():
     def sync_contacts():
         try:
             banana_data = get_banana_data(app.config)
-            return jsonify(banana_data)
+            google_client = get_google_workspace_client()
+            return jsonify([sync_google_workspace(google_client), banana_data])
+
         except Exception as e:
             message = {"error": f"An http error occurred: {e}"}
             return jsonify(message)
