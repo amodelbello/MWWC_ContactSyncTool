@@ -35,7 +35,7 @@ def main():
             flow = InstalledAppFlow.from_client_secrets_file(credentials_file, SCOPES)
             creds = flow.run_local_server(port=8000)
         # Save the credentials for the next run
-        with open("token.json", "w") as token:
+        with open(token_file, "w") as token:
             token.write(creds.to_json())
 
     service = build("admin", "directory_v1", credentials=creds)
