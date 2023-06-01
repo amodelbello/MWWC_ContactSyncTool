@@ -1,16 +1,6 @@
-import sys
 import pytest
 import mwwc_sync_contacts
-from mwwc_sync_contacts import (
-    create_app,
-    get_project_root,
-)
-
-sys.path.append("..")
-
-
-def test_get_project_root():
-    assert get_project_root() is not None
+from mwwc_sync_contacts import create_app
 
 
 @pytest.fixture()
