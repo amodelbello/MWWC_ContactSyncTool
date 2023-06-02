@@ -2,32 +2,32 @@ def sync_google_workspace(client):
     members = []
     groups = []
 
-    # groups_result = (
-    #     client.groups()
-    #     .list(customer="my_customer", maxResults=10, orderBy="email")
-    #     .execute()
-    # )
-    # groups = groups_result.get("groups", [])
+    groups_result = (
+        client.groups()
+        .list(customer="my_customer", maxResults=10, orderBy="email")
+        .execute()
+    )
+    groups = groups_result.get("groups", [])
 
     # list(groupKey, includeDerivedMembership=None, maxResults=None, pageToken=None, roles=None, x__xgafv=None)
     # for i, group in enumerate(groups):
     #     members_result = (
     #         client.members()
     #         .list(
-    #             groupKey=group["id"],
+    #             groupKey=group["email"],
     #             maxResults=10,
-    #             pageToken=str(i),
-    #             roles="MEMBER",
+    #             # pageToken=str(i),
+    #             # roles="MEMBER",
     #         )
     #         .execute()
     #     )
     #     members.append(members_result.get("members", []))
-    #     break
+    # break
     members_result = (
         client.members()
         .list(
-            groupKey="stewards@meowwolfworkers.org",
-            maxResults=10,
+            groupKey="all-bu@meowwolfworkers.org",
+            maxResults=200,
         )
         .execute()
     )
@@ -42,7 +42,7 @@ def sync_google_workspace(client):
     # )
     # privs = privs_result.get("items", [])
 
-    if not groups:
+    if not members:
         print("No users in the domain.")
         # return privs
     else:
