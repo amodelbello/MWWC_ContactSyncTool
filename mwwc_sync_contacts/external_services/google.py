@@ -8,7 +8,12 @@ from googleapiclient.discovery import build
 from from_root import from_root
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ["https://www.googleapis.com/auth/admin.directory.user"]
+SCOPES = [
+    "https://www.googleapis.com/auth/admin.directory.group",
+    "https://www.googleapis.com/auth/admin.directory.group.member",
+    "https://www.googleapis.com/auth/admin.directory.rolemanagement",
+    "https://www.googleapis.com/auth/admin.directory.user.security",
+]
 
 
 def get_google_workspace_client():

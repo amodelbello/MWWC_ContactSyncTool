@@ -31,7 +31,8 @@ def create_app():
     @app.route("/sync-contacts")
     def sync_contacts():
         try:
-            banana_data = get_banana_data(app.config)
+            # banana_data = get_banana_data(app.config)
+            banana_data = []
             google_client = get_google_workspace_client()
             return jsonify([sync_google_workspace(google_client), banana_data])
 
