@@ -2,12 +2,19 @@ from flask import Flask, jsonify
 from dotenv import load_dotenv
 import os
 from pathlib import Path
-from mwwc_sync_contacts.external_services.airtable import get_banana_data
-from mwwc_sync_contacts.external_services.google import get_google_workspace_client
-from mwwc_sync_contacts.external_services.action_network import (
-    get_all_action_network_users,
+
+from mwwc_sync_contacts.external_services.airtable import (
+    get_banana_data,
 )
-from mwwc_sync_contacts.data_transformation.google import sync_google_workspace
+from mwwc_sync_contacts.external_services.action_network import (
+    ActionNetwork,
+)
+from mwwc_sync_contacts.external_services.google import (
+    get_google_workspace_client,
+)
+from mwwc_sync_contacts.data_transformation.google import (
+    sync_google_workspace,
+)
 
 load_dotenv()
 
@@ -33,31 +40,41 @@ def create_app():
         <p>The UI goes here.</p><p>{os.getenv('TEST_VAR', 'default')}</p>
         """
 
-    @app.route("/scratch")
-    def scratch():
-        try:
-            ac_data = get_all_action_network_users(app.config)
-            return jsonify(ac_data)
-
-        except Exception as e:
-            message = {"error": f"An http error occurred: {e}"}
-            return jsonify(message)
-
     @app.route("/sync-contacts")
     def sync_contacts():
-        try:
-            # banana_data = get_banana_data(app.config)
-            banana_data = []
-            google_client = get_google_workspace_client()
-            return jsonify([sync_google_workspace(google_client), banana_data])
-
-        except Exception as e:
-            message = {"error": f"An http error occurred: {e}"}
-            return jsonify(message)
+        return {}
 
     @app.route("/restore-backup")
     def restore_backup():
-        data = {"some": "backup"}
-        return jsonify(data)
+        return {}
+
+    @app.route("/scratch/airtable")
+    def scratch_airtable():
+        banana_data = get_banana_data(app.config)
+        return jsonify(banana_data)
+
+    @app.route("/scratch/action-network")
+    def scratch_action_network():
+        try:
+            client = ActionNetwork((app.config))
+            people = client.get_people()
+
+            return jsonify(people)
+
+        except Exception as e:
+            message = {"error": f"An error occurred: {e}"}
+            return jsonify(message)
+
+    @app.route("/scratch/google")
+    def scratch_google():
+        try:
+            google_client = get_google_workspace_client()
+            google_members = sync_google_workspace(google_client)
+
+            return jsonify(google_members)
+
+        except Exception as e:
+            message = {"error": f"An http error occurred: {e}"}
+            return jsonify(message)
 
     return app

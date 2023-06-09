@@ -30,7 +30,7 @@ Jinja2==3.1.2
 MarkupSafe==2.1.2
 matplotlib-inline==0.1.6
 mccabe==0.7.0
--e git+ssh://git@github.com/amodelbello/MWWC_ContactSyncTool.git@f3cd82e21bbd4df84e7f2496f8dc74e1b3c06cfe#egg=mwwc_sync_contacts
+-e git+ssh://git@github.com/amodelbello/mwwc_sync_contacts.git@ed8fa0befd9463672e4a0e0224f42fff975ded43#egg=mwwc_sync_contacts
 mypy-extensions==1.0.0
 oauthlib==3.2.2
 packaging==23.1
