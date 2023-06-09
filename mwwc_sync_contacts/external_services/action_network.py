@@ -15,23 +15,23 @@ class ActionNetwork:
         r = requests.get(u, headers=self.headers)
         response = r.json()
         next_url = None
-        if ActionNetwork.response_has_next(response):
+        if ActionNetwork._response_has_next(response):
             next_url = response["_links"]["next"]["href"]
 
-        results.update(ActionNetwork.parse_response(response))
+        results.update(ActionNetwork._parse_response(response))
         return self.get_people(results, next_url)
 
     @staticmethod
-    def response_has_next(response):
+    def _response_has_next(response):
         return "next" in response["_links"]
 
     @staticmethod
-    def parse_response(response):
+    def _parse_response(response):
         person_dict = {}
         people = response["_embedded"]["osdi:people"]
         for person in people:
-            email = ActionNetwork.get_primary_email_from_person(person)
-            identifier = ActionNetwork.get_identifier_from_person(person)
+            email = ActionNetwork._get_primary_email_from_person(person)
+            identifier = ActionNetwork._get_identifier_from_person(person)
             # We use email as the key because that's what we know in airtable
             # TODO: there's a chance that a person may not have an email.
             # what should we do in that case?
@@ -40,22 +40,28 @@ class ActionNetwork:
         return person_dict
 
     @staticmethod
-    def get_primary_email_from_person(person):
+    def _get_primary_email_from_person(person):
         for item in person["email_addresses"]:
             if item["primary"] is True and "address" in item:
                 return item["address"]
 
     @staticmethod
-    def get_identifier_from_person(person):
+    def _get_identifier_from_person(person):
         for item in person["identifiers"]:
             candidate = item.split(":")
-            if len(candidate) == 2 and ActionNetwork.is_valid_uuid(candidate[1]):
+            if len(candidate) == 2 and ActionNetwork._is_valid_uuid(candidate[1]):
                 return candidate[1]
 
     @staticmethod
-    def is_valid_uuid(val):
+    def _is_valid_uuid(val):
         try:
             uuid.UUID(str(val))
             return True
         except ValueError:
             return False
+
+
+if __name__ == "__main__":
+    client = ActionNetwork()
+    people = client.get_people()
+    print(people)
