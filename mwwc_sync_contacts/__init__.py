@@ -4,6 +4,9 @@ import os
 from pathlib import Path
 from mwwc_sync_contacts.external_services.airtable import get_banana_data
 from mwwc_sync_contacts.external_services.google import get_google_workspace_client
+from mwwc_sync_contacts.external_services.action_network import (
+    get_all_action_network_users,
+)
 from mwwc_sync_contacts.data_transformation.google import sync_google_workspace
 
 load_dotenv()
@@ -19,6 +22,8 @@ def create_app():
         AIRTABLE_API_KEY=os.environ["AIRTABLE_API_KEY"],
         AIRTABLE_BASE_ID=os.environ["AIRTABLE_BASE_ID"],
         AIRTABLE_TABLE_ID=os.environ["AIRTABLE_TABLE_ID"],
+        ACTION_NETWORK_BASE_URL=os.environ["ACTION_NETWORK_BASE_URL"],
+        ACTION_NETWORK_API_KEY=os.environ["ACTION_NETWORK_API_KEY"],
     )
 
     @app.route("/")
@@ -27,6 +32,16 @@ def create_app():
         {__name__}
         <p>The UI goes here.</p><p>{os.getenv('TEST_VAR', 'default')}</p>
         """
+
+    @app.route("/scratch")
+    def scratch():
+        try:
+            ac_data = get_all_action_network_users(app.config)
+            return jsonify(ac_data)
+
+        except Exception as e:
+            message = {"error": f"An http error occurred: {e}"}
+            return jsonify(message)
 
     @app.route("/sync-contacts")
     def sync_contacts():
