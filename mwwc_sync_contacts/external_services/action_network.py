@@ -11,8 +11,8 @@ class ActionNetwork:
         if len(results) > 0 and next is None:
             return results
 
-        u = next if next is not None else self.url
-        r = requests.get(u, headers=self.headers)
+        url = next if next is not None else self.url
+        r = requests.get(url, headers=self.headers)
         response = r.json()
         next_url = None
         if ActionNetwork._response_has_next(response):
@@ -59,9 +59,3 @@ class ActionNetwork:
             return True
         except ValueError:
             return False
-
-
-if __name__ == "__main__":
-    client = ActionNetwork()
-    people = client.get_people()
-    print(people)

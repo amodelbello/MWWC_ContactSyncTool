@@ -15,5 +15,5 @@
 * Action Network
 - We can only access individual records via Action Network's uuid primary key (not email or other identifier).
   - This means we need to retrieve *all* Action Network data before we can determine how to sync it.
-- [ ] First step is to send a series of http requests (25 item limit per request) to get all records.
+- [X] First step is to send a series of http requests (25 item limit per request) to get all records.
 - [ ] Once we have all records we can compare the data with airtable and sync.

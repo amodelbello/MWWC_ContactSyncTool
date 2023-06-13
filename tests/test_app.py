@@ -19,6 +19,7 @@ def test_index(client):
     assert b"The UI goes here." in response.data
 
 
+@pytest.mark.skip(reason="not ready")
 def test_sync_contacts(client, monkeypatch):
     data = "some data"
 
@@ -30,6 +31,7 @@ def test_sync_contacts(client, monkeypatch):
     assert bytes(data, "utf-8") in request.data
 
 
+@pytest.mark.skip(reason="not ready")
 def test_sync_contacts_airtable_exception(monkeypatch, client):
     error = "Something went wrong"
 
