@@ -8,17 +8,20 @@ class ActionNetwork:
         self.headers = {"OSDI-API-Token": c["ACTION_NETWORK_API_KEY"]}
 
     def get_people(self, results={}, next=None):
-        if len(results) > 0 and next is None:
+        # Note the difference between using None and False here
+        if next is False:
             return results
 
         url = next if next is not None else self.url
         r = requests.get(url, headers=self.headers)
         response = r.json()
-        next_url = None
+
+        next_url = False
         if ActionNetwork._response_has_next(response):
             next_url = response["_links"]["next"]["href"]
 
         results.update(ActionNetwork._parse_response(response))
+
         return self.get_people(results, next_url)
 
     @staticmethod
@@ -35,7 +38,7 @@ class ActionNetwork:
             # We use email as the key because that's what we know in airtable
             # TODO: there's a chance that a person may not have an email.
             # what should we do in that case?
-            if email:
+            if email and identifier:
                 person_dict[email] = identifier
         return person_dict
 
@@ -44,6 +47,8 @@ class ActionNetwork:
         for item in person["email_addresses"]:
             if item["primary"] is True and "address" in item:
                 return item["address"]
+            else:
+                return ""
 
     @staticmethod
     def _get_identifier_from_person(person):
@@ -51,6 +56,8 @@ class ActionNetwork:
             candidate = item.split(":")
             if len(candidate) == 2 and ActionNetwork._is_valid_uuid(candidate[1]):
                 return candidate[1]
+            else:
+                return ""
 
     @staticmethod
     def _is_valid_uuid(val):

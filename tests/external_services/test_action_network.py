@@ -2,7 +2,6 @@ import sys
 import requests
 from mwwc_sync_contacts.external_services.action_network import ActionNetwork
 
-
 sys.path.append("...")
 
 
@@ -35,5 +34,23 @@ def test_get_people(
 
     action_network = ActionNetwork(config_fixture)
     people = action_network.get_people()
-    print(people)
-    assert people is not None
+    assert len(people) == 2
+
+
+def test_get_people_bad_uuid(
+    monkeypatch,
+    action_network_people_bad_uuid,
+):
+    class MockResponse:
+        @staticmethod
+        def json():
+            return action_network_people_bad_uuid
+
+    def mock_get(*args, **kwargs):
+        return MockResponse()
+
+    monkeypatch.setattr(requests, "get", mock_get)
+
+    action_network = ActionNetwork(config_fixture)
+    people = action_network.get_people({})
+    assert not people

@@ -16,7 +16,7 @@ def action_network_people():
                     "email_addresses": [
                         {
                             "primary": True,
-                            "address": "email@email.com",
+                            "address": "email1@email.com",
                             "status": "subscribed",
                         }
                     ],
@@ -39,7 +39,30 @@ def action_network_people_no_next():
                     "email_addresses": [
                         {
                             "primary": True,
-                            "address": "email@email.com",
+                            "address": "email2@email.com",
+                            "status": "subscribed",
+                        }
+                    ],
+                }
+            ]
+        },
+    }
+
+
+@pytest.fixture
+def action_network_people_bad_uuid():
+    return {
+        "_links": {},
+        "_embedded": {
+            "osdi:people": [
+                {
+                    "identifiers": [
+                        "action_network:no-sir",
+                    ],
+                    "email_addresses": [
+                        {
+                            "primary": False,
+                            "address": "email3@email.com",
                             "status": "subscribed",
                         }
                     ],
