@@ -3,13 +3,13 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 
-from mwwc_sync_contacts.external_services.airtable import (
+from mwwc_sync_contacts.airtable import (
     get_banana_data,
 )
-from mwwc_sync_contacts.external_services.action_network import (
+from mwwc_sync_contacts.action_network import (
     ActionNetwork,
 )
-from mwwc_sync_contacts.external_services.google import (
+from mwwc_sync_contacts.google import (
     get_google_workspace_client,
 )
 from mwwc_sync_contacts.data_transformation.google import (
