@@ -8,3 +8,6 @@ README.md.tmp
 htmlcov
 instance
 gcp_creds
+!airtable_backups
+airtable_backups/*
+!airtable_backups/.keep

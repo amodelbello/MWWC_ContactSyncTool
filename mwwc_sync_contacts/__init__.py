@@ -5,6 +5,7 @@ from pathlib import Path
 
 from mwwc_sync_contacts.airtable import (
     get_banana_data,
+    write_latest_banana_data_to_file,
 )
 from mwwc_sync_contacts.action_network import (
     ActionNetwork,
@@ -66,6 +67,7 @@ def create_app():
     @app.route("/scratch/airtable")
     def scratch_airtable():
         banana_data = get_banana_data(app.config)
+        write_latest_banana_data_to_file(banana_data)
         return jsonify(banana_data)
 
     @app.route("/scratch/action-network")
