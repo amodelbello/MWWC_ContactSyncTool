@@ -88,16 +88,7 @@ class Airtable:
             json.loads(Airtable.read_backup_file(old_filename))
         )
 
-        additions = self._get_additions(new_data, backup_data)
-        deletions = self._get_deletions(new_data, backup_data)
-
-        return (additions, deletions)
-
-    def _get_additions(self, new_data, old_data):
-        return None
-
-    def _get_deletions(self, new_data, old_data):
-        return None
+        return self._calc_differences(new_data, backup_data)
 
     def _write_latest_banana_data_to_file(self):
         new_filename = f"{BACKUP_DIR}/{datetime.utcnow()}.json"
@@ -114,3 +105,20 @@ class Airtable:
             if latest_backup_text != file_text:
                 self.has_differences = True
                 Airtable.write_backup_file(new_filename, file_text)
+
+    def _calc_differences(self, new_data, old_data):
+        additions = []
+        deletions = []
+
+        for key, value in old_data.items():
+            if key not in new_data.keys():
+                deletions.append(old_data[key])
+
+        for key, value in new_data.items():
+            if key not in old_data.keys():
+                additions.append(new_data[key])
+            elif new_data[key] != old_data[key]:
+                additions.append(new_data[key])
+                deletions.append(old_data[key])
+
+        return (additions, deletions)
