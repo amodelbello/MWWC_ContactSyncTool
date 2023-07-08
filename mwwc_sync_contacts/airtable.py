@@ -67,6 +67,11 @@ class Airtable:
 
         self._write_latest_banana_data_to_file()
         if not self.has_differences:
+            # TODO: If there is only a single airtable backup
+            # it means that we need to delete all data in
+            # google & action network and add the data from the file,
+            # because this is the first run of the software.
+            # We need to be VERY careful with this step.
             print("There are no updates to Airtable.")
             return
 
@@ -83,7 +88,16 @@ class Airtable:
             json.loads(Airtable.read_backup_file(old_filename))
         )
 
-        return backup_data
+        additions = self._get_additions(new_data, backup_data)
+        deletions = self._get_deletions(new_data, backup_data)
+
+        return (additions, deletions)
+
+    def _get_additions(self, new_data, old_data):
+        return None
+
+    def _get_deletions(self, new_data, old_data):
+        return None
 
     def _write_latest_banana_data_to_file(self):
         new_filename = f"{BACKUP_DIR}/{datetime.utcnow()}.json"
