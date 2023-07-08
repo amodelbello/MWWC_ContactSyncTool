@@ -1,6 +1,6 @@
 import sys
 import requests
-from mwwc_sync_contacts.external_services.action_network import ActionNetwork
+from mwwc_sync_contacts.action_network import ActionNetwork
 
 sys.path.append("...")
 

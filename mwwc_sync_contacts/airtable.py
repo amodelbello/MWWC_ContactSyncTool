@@ -68,7 +68,7 @@ class Airtable:
         self._write_latest_banana_data_to_file()
         if not self.has_differences:
             print("There are no updates to Airtable.")
-            # return
+            return
 
         filenames_sorted_desc = sorted(
             glob.glob(BACKUP_DIR + "/*"), key=os.path.getctime, reverse=True
