@@ -43,3 +43,16 @@ def test_get_banana_data_exception(monkeypatch):
     airtable = Airtable()
     with pytest.raises(Exception, match=error):
         airtable.get_banana_data(config_fixture)
+
+
+# To mock:
+# write_backup_file():
+# open - to open file for writing, return mock file
+# file.write
+# file.close
+# glob.glob to return backup filenames
+# open - to open file for reading, return mock file
+# file.read - return text
+# file.close
+def test_get_differences(monkeypatch):
+    pass
