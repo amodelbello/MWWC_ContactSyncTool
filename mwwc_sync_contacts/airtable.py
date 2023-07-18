@@ -73,7 +73,7 @@ class Airtable:
             # because this is the first run of the software.
             # We need to be VERY careful with this step.
             print("There are no updates to Airtable.")
-            return
+            return None
 
         filenames_sorted_desc = sorted(
             glob.glob(BACKUP_DIR + "/*"), key=os.path.getctime, reverse=True

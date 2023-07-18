@@ -2,6 +2,60 @@ import pytest
 
 
 @pytest.fixture
+def airtable_data():
+    return [
+        {
+            "createdTime": "2023-06-10T19:20:06.000Z",
+            "fields": {
+                "Area": "Santa Fe LLC",
+                "BU Status": "Current",
+                "Chosen First Name": "aaaaa",
+                "Chosen Last Name": "bbbbb",
+                "MIGS?": "Yes",
+                "Personal Email": "aaa@bbb.com",
+            },
+            "id": "recGlxjOhq8dFY9Po",
+        },
+        {
+            "createdTime": "2022-10-03T21:57:03.000Z",
+            "fields": {
+                "Area": "Santa Fe INC",
+                "BU Status": "Current",
+                "Chosen First Name": "ccccc",
+                "Chosen Last Name": "dddddd",
+                "MIGS?": "Yes",
+                "Personal Email": "cccc@ddddd.com",
+            },
+            "id": "recidq5HGk7dLWNoB",
+        },
+        {
+            "createdTime": "2023-06-06T00:07:57.000Z",
+            "fields": {
+                "Area": "Denver LLC General",
+                "BU Status": "Current",
+                "Chosen First Name": "eeeeee",
+                "Chosen Last Name": "ffffff",
+                "MIGS?": "No",
+                "Personal Email": "eeee@ffff.com",
+            },
+            "id": "recb8yqhq5wUfoOt6",
+        },
+        {
+            "createdTime": "2023-06-15T05:55:00.000Z",
+            "fields": {
+                "Area": "Denver LLC General",
+                "BU Status": "Current",
+                "Chosen First Name": "gggggg",
+                "Chosen Last Name": "hhhhhhh",
+                "MIGS?": "Yes",
+                "Personal Email": "ggggg@hhhhh.com",
+            },
+            "id": "recmxWtPfPbbfZN0v",
+        },
+    ]
+
+
+@pytest.fixture
 def action_network_people():
     return {
         "_links": {

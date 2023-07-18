@@ -1,4 +1,5 @@
 import sys
+import os
 import pytest
 from pyairtable import Table
 from mwwc_sync_contacts.airtable import Airtable
@@ -45,6 +46,29 @@ def test_get_banana_data_exception(monkeypatch):
         airtable.get_banana_data(config_fixture)
 
 
+def test_get_differences_no_data():
+    error = "Data from Airtable is missing"
+
+    airtable = Airtable()
+    with pytest.raises(Exception, match=error):
+        airtable.get_differences()
+
+
+def test_get_differences_no_backups(monkeypatch, airtable_data):
+    def mock_listdir(bkp_dir):
+        return ["one-file"]
+
+    monkeypatch.setattr(os, "listdir", mock_listdir)
+
+    airtable = Airtable()
+    airtable.banana_data = airtable_data
+
+    differences = airtable.get_differences()
+
+    # TODO: This will change when the logic is written
+    assert differences is None
+
+
 # To mock:
 # write_backup_file():
 # open - to open file for writing, return mock file
@@ -54,5 +78,9 @@ def test_get_banana_data_exception(monkeypatch):
 # open - to open file for reading, return mock file
 # file.read - return text
 # file.close
-def test_get_differences(monkeypatch):
+
+# os.listdir(BACKUP_DIR)
+
+
+def test_get_differences(monkeypatch, airtable_data):
     pass
