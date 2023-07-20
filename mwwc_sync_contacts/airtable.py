@@ -94,7 +94,7 @@ class Airtable:
         new_filename = f"{BACKUP_DIR}/{datetime.utcnow()}.json"
         file_text = json.dumps(self.banana_data)
 
-        if len(os.listdir(BACKUP_DIR)) == 1:  # The .keep file will be in there
+        if len(os.listdir(BACKUP_DIR)) < 2:  # The .keep file will be in there
             Airtable.write_backup_file(new_filename, file_text)
         else:
             latest_backup_filename = max(
