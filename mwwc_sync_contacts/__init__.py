@@ -10,7 +10,7 @@ from mwwc_sync_contacts.action_network import (
 from mwwc_sync_contacts.google import (
     get_google_workspace_client,
 )
-from mwwc_sync_contacts.data_transformation.google import (
+from mwwc_sync_contacts.google import (
     sync_google_workspace,
 )
 
@@ -65,8 +65,9 @@ def create_app():
     def scratch_airtable():
         airtable = Airtable()
         airtable.get_banana_data(app.config)
-        new_data = airtable.get_differences()
-        return jsonify(new_data)
+        (additions, deletions) = airtable.get_differences()
+        # return jsonify({"additions": additions, "deletions": deletions})
+        return jsonify(airtable.banana_data)
 
     @app.route("/scratch/action-network")
     def scratch_action_network():
