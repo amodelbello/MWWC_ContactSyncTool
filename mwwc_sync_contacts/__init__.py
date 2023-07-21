@@ -65,9 +65,9 @@ def create_app():
     def scratch_airtable():
         airtable = Airtable()
         airtable.get_banana_data(app.config)
-        (additions, deletions) = airtable.get_differences()
-        # return jsonify({"additions": additions, "deletions": deletions})
-        return jsonify(airtable.banana_data)
+        differences = airtable.get_differences()
+        return jsonify(differences)
+        # return jsonify(airtable.banana_data)
 
     @app.route("/scratch/action-network")
     def scratch_action_network():

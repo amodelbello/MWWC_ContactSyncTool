@@ -125,8 +125,8 @@ class TestAirtable:
         differences = airtable.get_differences()
 
         self.tearDown()
-        assert len(differences[0]) == 1
-        assert len(differences[1]) == 0
+        assert len(differences["additions"]) == 1
+        assert len(differences["deletions"]) == 0
 
     def test_get_differences_with_addition(
         self, airtable_data, airtable_data_with_addition
@@ -142,8 +142,8 @@ class TestAirtable:
         differences = airtable.get_differences()
 
         self.tearDown()
-        assert len(differences[0]) == 0
-        assert len(differences[1]) == 1
+        assert len(differences["additions"]) == 0
+        assert len(differences["deletions"]) == 1
 
     def test_get_differences_with_change(
         self, airtable_data, airtable_data_with_change
@@ -159,5 +159,5 @@ class TestAirtable:
         differences = airtable.get_differences()
 
         self.tearDown()
-        assert len(differences[0]) == 1
-        assert len(differences[1]) == 1
+        assert len(differences["additions"]) == 1
+        assert len(differences["deletions"]) == 1

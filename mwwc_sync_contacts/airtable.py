@@ -124,4 +124,7 @@ class Airtable:
                 additions.append(new_data[key])
                 deletions.append(old_data[key])
 
-        return (additions, deletions)
+        return {
+            "additions": additions,
+            "deletions": deletions,
+        }
