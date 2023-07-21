@@ -8,6 +8,14 @@ class ActionNetwork:
         self.headers = {"OSDI-API-Token": c["ACTION_NETWORK_API_KEY"]}
 
     def get_people(self, results={}, next=None):
+        """
+        Before we can sync contacts with action network
+        we need a way to compare their data with airtable's.
+        This method returns an dictionary of all action network contacts
+        in { email: action_network_id} form.
+        We can use this to compare with the latest airtable data to
+        know which records to add and delete.
+        """
         # Note the difference between using None and False here
         if next is False:
             return results
@@ -22,6 +30,12 @@ class ActionNetwork:
 
         results.update(ActionNetwork._parse_response(response))
 
+        """
+        The action network api only returns paginated results.
+        There is no `get_all()` method.
+        This is a recursive method that keeps requesting data
+        page by page until there are no more pages.
+        """
         return self.get_people(results, next_url)
 
     @staticmethod

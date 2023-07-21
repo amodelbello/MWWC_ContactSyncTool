@@ -37,6 +37,7 @@ class Airtable:
             c["AIRTABLE_BASE_ID"],
             c["AIRTABLE_TABLE_ID"],
         )
+        # TODO: validate it is json and the json we expect
         self.banana_data = banana_table.all(view=c["AIRTABLE_VIEW_ID"], fields=fields)
 
     @classmethod
@@ -67,11 +68,13 @@ class Airtable:
 
         self._write_latest_banana_data_to_file()
         if not self.has_differences:
-            # TODO: If there is only a single airtable backup
-            # it means that we need to delete all data in
-            # google & action network and add the data from the file,
-            # because this is the first run of the software.
-            # We need to be VERY careful with this step.
+            """
+            TODO: If there is only a single airtable backup
+            it means that we need to delete all data in
+            google & action network and add the data from the file,
+            because this is the first run of the software.
+            We need to be VERY careful with this step.
+            """
             print("There are no updates to Airtable.")
             return None
 
