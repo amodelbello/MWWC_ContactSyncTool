@@ -4,6 +4,7 @@ import glob
 from pathlib import Path
 from datetime import datetime
 from pyairtable import Table
+from jsonschema import validate
 
 BACKUP_DIR = f"{Path(__file__).parent}/airtable_backups"
 
@@ -37,8 +38,49 @@ class Airtable:
             c["AIRTABLE_BASE_ID"],
             c["AIRTABLE_TABLE_ID"],
         )
-        # TODO: validate it is json and the json we expect
-        self.banana_data = banana_table.all(view=c["AIRTABLE_VIEW_ID"], fields=fields)
+
+        try:
+            self.banana_data = banana_table.all(
+                view=c["AIRTABLE_VIEW_ID"], fields=fields
+            )
+        except Exception as e:
+            raise ValueError(f"Error getting data from airtable: {e}")
+
+        try:
+            self.validate_airtable_response()
+        except Exception as e:
+            raise ValueError(f"json returned from airtable is invalid: {e}")
+
+    def validate_airtable_response(self):
+        schema = {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "array",
+            "items": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "createdTime": {"type": "string"},
+                        "fields": {
+                            "type": "object",
+                            "properties": {
+                                "Area": {"type": "string"},
+                                "BU Status": {"type": "string"},
+                                "Chosen First Name": {"type": "string"},
+                                "Chosen Last Name": {"type": "string"},
+                                "MIGS?": {"type": "string"},
+                                "Personal Email": {"type": "string"},
+                                "Steward": {"type": "boolean"},
+                                "Elected Position": {"type": "string"},
+                            },
+                        },
+                        "id": {"type": "string"},
+                    },
+                    "required": ["createdTime", "fields", "id"],
+                }
+            ],
+        }
+
+        validate(instance=self.banana_data, schema=schema)
 
     @classmethod
     def write_backup_file(cls, new_filename, file_contents):

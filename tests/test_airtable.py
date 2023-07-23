@@ -49,20 +49,19 @@ class TestAirtable:
         self.monkeypatch.setattr(os, "listdir", self.listdir_func)
         self.monkeypatch.setattr(os.path, "getctime", self.getctime_func)
 
-    def test_get_banana_data(self):
+    def test_get_banana_data_okay(self, airtable_data):
         self.setUp()
-        data = "{'some': 'data'}"
 
         def mockreturn(*args, **kwargs):
-            return data
+            return airtable_data
 
         self.monkeypatch.setattr(Table, "all", mockreturn)
         airtable = Airtable()
         airtable.get_banana_data(config_fixture)
-        assert airtable.banana_data == data
+        assert airtable.banana_data == airtable_data
         self.tearDown()
 
-    def test_get_banana_data_exception(self):
+    def test_get_banana_data_request(self):
         self.setUp()
         error = "Something went wrong"
 
@@ -72,6 +71,19 @@ class TestAirtable:
         self.monkeypatch.setattr(Table, "all", mockreturn)
         airtable = Airtable()
         with pytest.raises(Exception, match=error):
+            airtable.get_banana_data(config_fixture)
+        self.tearDown()
+
+    def test_get_banana_data_response(self):
+        self.setUp()
+        data = "this is not okay"
+
+        def mockreturn(*args, **kwargs):
+            return data
+
+        self.monkeypatch.setattr(Table, "all", mockreturn)
+        airtable = Airtable()
+        with pytest.raises(Exception):
             airtable.get_banana_data(config_fixture)
         self.tearDown()
 
