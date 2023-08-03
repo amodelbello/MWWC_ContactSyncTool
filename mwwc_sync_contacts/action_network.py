@@ -11,7 +11,7 @@ class ActionNetwork:
         """
         Before we can sync contacts with action network
         we need a way to compare their data with airtable's.
-        This method returns an dictionary of all action network contacts
+        This method returns a dictionary of all action network contacts
         in { email: action_network_id} form.
         We can use this to compare with the latest airtable data to
         know which records to add and delete.
@@ -49,9 +49,11 @@ class ActionNetwork:
         for person in people:
             email = ActionNetwork._get_primary_email_from_person(person)
             identifier = ActionNetwork._get_identifier_from_person(person)
-            # We use email as the key because that's what we know in airtable
-            # TODO: there's a chance that a person may not have an email.
-            # what should we do in that case?
+            """
+            We use email as the key because that's what we know in airtable
+            TODO: there's a chance that a person may not have an email.
+            what should we do in that case?
+            """
             if email and identifier:
                 person_dict[email] = identifier
         return person_dict
