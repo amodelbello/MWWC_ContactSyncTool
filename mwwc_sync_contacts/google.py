@@ -50,6 +50,27 @@ def get_google_workspace_client():
 
 
 def sync_google_workspace(client):
+    # Try to add member
+    member = {
+        "email": "sync_test@hello.com",
+        "role": "MEMBER",
+    }
+
+    # add a member to a group (this is all-bu)
+    client.members().insert(groupKey="01d96cc0179jnck", body=member).execute()
+
+    # remove a member from a group
+    client.members().delete(
+        groupKey="01d96cc0179jnck", memberKey="amodelbello+mwwc_test@pm.me"
+    ).execute()
+
+    # won't work. we don't have an enterprise account
+    # is_in_group = client.members().hasMember(
+    #     groupKey="01d96cc0179jnck", memberKey="sync_test@hello.com"
+    # ).execute()
+
+    print(f"is in group?: {is_in_group.isMember}")
+
     members = []
     groups = []
 
@@ -78,7 +99,7 @@ def sync_google_workspace(client):
         client.members()
         .list(
             groupKey="all-bu@meowwolfworkers.org",
-            maxResults=200,
+            # maxResults=200,
         )
         .execute()
     )
