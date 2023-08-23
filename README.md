@@ -13,6 +13,11 @@ pip install -r requirements.txt
 ./dev_server.sh
 ```
 
+## Start the development server with remote-pdb enabled
+```bash
+./dev_server.sh -d
+```
+
 ## Run tests
 ```bash
 ./run_tests.sh
