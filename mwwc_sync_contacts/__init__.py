@@ -11,7 +11,7 @@ from mwwc_sync_contacts.google import (
     get_google_workspace_client,
 )
 from mwwc_sync_contacts.google import (
-    sync_google_workspace,
+    GoogleWorkspace,
 )
 
 load_dotenv()
@@ -84,10 +84,22 @@ def create_app():
     @app.route("/scratch/google")
     def scratch_google():
         try:
-            google_client = get_google_workspace_client()
-            google_members = sync_google_workspace(google_client)
+            airtable = Airtable()
+            airtable.get_banana_data(app.config)
+            differences = airtable.get_differences()
 
-            return jsonify(google_members)
+            # TODO: Clean this up
+            if differences is not None:
+                additions = differences.get("additions", [])
+                deletions = differences.get("deletions", [])
+            else:
+                additions = []
+                deletions = []
+
+            google_client = get_google_workspace_client()
+
+            google = GoogleWorkspace(google_client, additions, deletions)
+            return jsonify(google.groups)
 
         except Exception as e:
             message = {"error": f"An http error occurred: {e}"}

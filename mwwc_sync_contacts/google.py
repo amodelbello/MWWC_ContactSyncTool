@@ -44,83 +44,100 @@ def get_google_workspace_client():
     return client
 
 
-#########################################
-# scratch code below
-#########################################
+class GoogleWorkspace():
+    def __init__(self, client, additions=[], deletions=[]):
+        self.client = client
+        self.additions = additions
+        self.deletions = deletions
+        self._groups = None
 
-
-def sync_google_workspace(client):
-    # Try to add member
-    member = {
-        "email": "sync_test@hello.com",
-        "role": "MEMBER",
-    }
-
-    # add a member to a group (this is all-bu)
-    client.members().insert(groupKey="01d96cc0179jnck", body=member).execute()
-
-    # remove a member from a group
-    client.members().delete(
-        groupKey="01d96cc0179jnck", memberKey="amodelbello+mwwc_test@pm.me"
-    ).execute()
-
-    # won't work. we don't have an enterprise account
-    # is_in_group = client.members().hasMember(
-    #     groupKey="01d96cc0179jnck", memberKey="sync_test@hello.com"
-    # ).execute()
-
-    print(f"is in group?: {is_in_group.isMember}")
-
-    members = []
-    groups = []
-
-    groups_result = (
-        client.groups()
-        .list(customer="my_customer", maxResults=10, orderBy="email")
-        .execute()
-    )
-    groups = groups_result.get("groups", [])
-
-    # list(groupKey, includeDerivedMembership=None, maxResults=None, pageToken=None, roles=None, x__xgafv=None)
-    # for i, group in enumerate(groups):
-    #     members_result = (
-    #         client.members()
-    #         .list(
-    #             groupKey=group["email"],
-    #             maxResults=10,
-    #             # pageToken=str(i),
-    #             # roles="MEMBER",
-    #         )
-    #         .execute()
-    #     )
-    #     members.append(members_result.get("members", []))
-    # break
-    members_result = (
-        client.members()
-        .list(
-            groupKey="all-bu@meowwolfworkers.org",
-            # maxResults=200,
+    def _get_groups(self):
+        groups_result = (
+            self.client.groups()
+            .list(customer="my_customer", maxResults=100, orderBy="email")
+            .execute()
         )
-        .execute()
-    )
-    members = members_result.get("members", [])
+        return groups_result.get("groups", [])
 
-    # privs_result = (
-    #     client.privileges()
-    #     .list(
-    #         customer="my_customer",
-    #     )
-    #     .execute()
-    # )
-    # privs = privs_result.get("items", [])
+    @property
+    def groups(self):
+        if self._groups is None:
+            self._groups = self._get_groups()
+        return self._groups
 
-    if not members:
-        print("No users in the domain.")
-        # return privs
-    else:
-        return [groups, members]
-        # response = []
-        # for group in groups:
-        #     full_name = group["name"]["fullName"]
-        #     response.append("{0} ({1})".format(group["primaryEmail"], full_name))
-        # return response
+    def remove_members():
+        # foreach groups
+        #    foreach members
+        #       try remove member
+        #       catch continue
+        pass
+
+    def add_members():
+        pass
+
+    def sync_google_workspace(client):
+        # Try to add member
+        # member = {
+        #     "email": "sync_test@hello.com",
+        #     "role": "MEMBER",
+        # }
+
+        # add a member to a group (this is all-bu)
+        # client.members().insert(groupKey="01d96cc0179jnck", body=member).execute()
+
+        # remove a member from a group
+        # client.members().delete(
+        #     groupKey="01d96cc0179jnck", memberKey="amodelbello+mwwc_test@pm.me"
+        # ).execute()
+
+        # won't work. we don't have an enterprise account
+        # is_in_group = client.members().hasMember(
+        #     groupKey="01d96cc0179jnck", memberKey="sync_test@hello.com"
+        # ).execute()
+        # print(f"is in group?: {is_in_group.isMember}")
+
+        members = []
+
+        # list(groupKey, includeDerivedMembership=None, maxResults=None, pageToken=None, roles=None, x__xgafv=None)
+        # for i, group in enumerate(groups):
+        #     members_result = (
+        #         client.members()
+        #         .list(
+        #             groupKey=group["email"],
+        #             maxResults=10,
+        #             # pageToken=str(i),
+        #             # roles="MEMBER",
+        #         )
+        #         .execute()
+        #     )
+        #     members.append(members_result.get("members", []))
+        # break
+        members_result = (
+            client.members()
+            .list(
+                groupKey="all-bu@meowwolfworkers.org",
+                # maxResults=200,
+            )
+            .execute()
+        )
+        members = members_result.get("members", [])
+
+        # privs_result = (
+        #     client.privileges()
+        #     .list(
+        #         customer="my_customer",
+        #     )
+        #     .execute()
+        # )
+        # privs = privs_result.get("items", [])
+
+        if not members:
+            print("No users in the domain.")
+            # return privs
+        else:
+            return members
+            # response = []
+            # for group in groups:
+            #     full_name = group["name"]["fullName"]
+            #     response.append("{0} ({1})".format(group["primaryEmail"], full_name))
+            # return response
