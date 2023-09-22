@@ -31,6 +31,8 @@ class Airtable:
             c["AIRTABLE_STEWARD"],
             c["AIRTABLE_ELECTED_POSITION"],
             c["AIRTABLE_PERSONAL_EMAIL"],
+            c["AIRTABLE_GOOGLE_WRITE_PERMISSIONS"],
+            c["AIRTABLE_NON_BU_ASSOCIATE"],
         ]
 
         banana_table = Table(
