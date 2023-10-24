@@ -5,7 +5,7 @@ import json
 import pytest
 from pytest import MonkeyPatch
 from pyairtable import Table
-from mwwc_sync_contacts.airtable import Airtable
+from mwwc_airtable import Airtable
 
 sys.path.append("...")
 

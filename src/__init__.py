@@ -3,15 +3,13 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 
-from mwwc_sync_contacts.airtable import Airtable
-from mwwc_sync_contacts.action_network import (
+from mwwc_airtable import Airtable
+from mwwc_action_network import (
     ActionNetwork,
 )
-from mwwc_sync_contacts.google import (
-    get_google_workspace_client,
-)
-from mwwc_sync_contacts.google import (
+from mwwc_google import (
     GoogleWorkspace,
+    get_google_workspace_client,
 )
 
 load_dotenv()
