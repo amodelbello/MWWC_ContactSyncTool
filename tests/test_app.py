@@ -1,6 +1,6 @@
 import pytest
-import mwwc_sync_contacts
-from mwwc_sync_contacts import create_app
+from mwwc_airtable import Airtable
+from __init__ import create_app
 
 
 @pytest.fixture()
@@ -26,7 +26,7 @@ def test_sync_contacts(client, monkeypatch):
     def mockreturn(*args, **kwargs):
         return data
 
-    monkeypatch.setattr(mwwc_sync_contacts, "get_banana_data", mockreturn)
+    monkeypatch.setattr(Airtable, "get_banana_data", mockreturn)
     request = client.get("/sync-contacts")
     assert bytes(data, "utf-8") in request.data
 
@@ -38,6 +38,6 @@ def test_sync_contacts_airtable_exception(monkeypatch, client):
     def mockreturn(*args, **kwargs):
         raise Exception(error)
 
-    monkeypatch.setattr(mwwc_sync_contacts, "get_banana_data", mockreturn)
+    monkeypatch.setattr(Airtable, "get_banana_data", mockreturn)
     response = client.get("/sync-contacts")
     assert bytes(error, "utf-8") in response.data

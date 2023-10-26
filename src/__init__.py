@@ -3,15 +3,13 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 
-from mwwc_sync_contacts.airtable import Airtable
-from mwwc_sync_contacts.action_network import (
+from mwwc_airtable import Airtable
+from mwwc_action_network import (
     ActionNetwork,
 )
-from mwwc_sync_contacts.google import (
+from mwwc_google import (
+    GoogleWorkspace,
     get_google_workspace_client,
-)
-from mwwc_sync_contacts.google import (
-    sync_google_workspace,
 )
 
 load_dotenv()
@@ -37,11 +35,12 @@ def create_app():
         AIRTABLE_AREA_SANTA_FE_LLC=os.environ["AIRTABLE_AREA_SANTA_FE_LLC"],
         AIRTABLE_AREA_SANTA_FE_INC=os.environ["AIRTABLE_AREA_SANTA_FE_INC"],
         AIRTABLE_AREA_DENVER_LLC_GENERAL=os.environ["AIRTABLE_AREA_DENVER_LLC_GENERAL"],
-        AIRTABLE_AREA_DENVER_LLC_SECURITY=os.environ[
-            "AIRTABLE_AREA_DENVER_LLC_SECURITY"
-        ],
+        AIRTABLE_NON_BU_ASSOCIATE=os.environ["AIRTABLE_NON_BU_ASSOCIATE"],
         AIRTABLE_ELECTED_POSITION=os.environ["AIRTABLE_ELECTED_POSITION"],
         AIRTABLE_PERSONAL_EMAIL=os.environ["AIRTABLE_PERSONAL_EMAIL"],
+        AIRTABLE_AREA_DENVER_LLC_SECURITY=os.environ["AIRTABLE_AREA_DENVER_LLC_SECURITY"],
+        AIRTABLE_GOOGLE_WRITE_PERMISSIONS=os.environ["AIRTABLE_GOOGLE_WRITE_PERMISSIONS"],
+
         ACTION_NETWORK_BASE_URL=os.environ["ACTION_NETWORK_BASE_URL"],
         ACTION_NETWORK_API_KEY=os.environ["ACTION_NETWORK_API_KEY"],
     )
@@ -84,10 +83,22 @@ def create_app():
     @app.route("/scratch/google")
     def scratch_google():
         try:
-            google_client = get_google_workspace_client()
-            google_members = sync_google_workspace(google_client)
+            airtable = Airtable()
+            airtable.get_banana_data(app.config)
+            differences = airtable.get_differences()
 
-            return jsonify(google_members)
+            # TODO: Clean this up
+            if differences is not None:
+                additions = differences.get("additions", [])
+                deletions = differences.get("deletions", [])
+            else:
+                additions = []
+                deletions = []
+
+            google_client = get_google_workspace_client()
+
+            google = GoogleWorkspace(google_client, additions, deletions)
+            return jsonify(google.groups)
 
         except Exception as e:
             message = {"error": f"An http error occurred: {e}"}
