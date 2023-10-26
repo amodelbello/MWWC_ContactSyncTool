@@ -8,6 +8,6 @@ README.md.tmp
 htmlcov
 instance
 gcp_creds
-!mwwc_sync_contacts/airtable_backups
-mwwc_sync_contacts/airtable_backups/*
-!mwwc_sync_contacts/airtable_backups/.keep
+!src/airtable_backups
+src/airtable_backups/*
+!src/airtable_backups/.keep
