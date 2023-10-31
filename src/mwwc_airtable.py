@@ -126,7 +126,6 @@ class Airtable:
             print("There are no updates to Airtable.")
             return None
 
-        # FIXME: make sure this is sorting correctly, i.e. the dates and times
         filenames_sorted_desc = sorted(
             os.listdir(self.backup_dir),
             reverse=True,
@@ -152,7 +151,6 @@ class Airtable:
         if len(os.listdir(self.backup_dir)) < 2:  # The .keep file will be in there
             Airtable.write_backup_file(new_filename, file_text)
         else:
-            # FIXME: make sure this is sorting correctly, i.e. `key=os.path.getctime`
             latest_backup_filename = max(
                 os.listdir(self.backup_dir),
                 key=DATETIME_SORT_KEY,
