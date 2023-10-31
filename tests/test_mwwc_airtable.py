@@ -5,14 +5,19 @@ from mwwc_airtable import Airtable
 
 class TestAirtable:
     @patch('pyairtable.Table.all')
-    def test_get_banana_data_okay(self, mock_table_all, airtable_config_data, airtable_data):
+    def test_get_banana_data_okay(
+            self,
+            mock_table_all,
+            airtable_config_data,
+            airtable_data
+    ):
         mock_table_all.side_effect = [airtable_data]
         airtable = Airtable(airtable_config_data)
         airtable.get_banana_data()
         assert airtable.banana_data == airtable_data
 
     @patch('pyairtable.Table.all')
-    def test_get_banana_data_request(self, mock_table_all, airtable_config_data):
+    def test_get_banana_data_exception(self, mock_table_all, airtable_config_data):
         error = "Something went wrong"
         mock_table_all.side_effect = Exception(error)
         airtable = Airtable(airtable_config_data)
@@ -20,11 +25,11 @@ class TestAirtable:
             airtable.get_banana_data()
 
     @patch('pyairtable.Table.all')
-    def test_get_banana_data_response(self, mock_table_all, airtable_config_data):
-        data = "this is not okay"
-        mock_table_all.side_effect = data
+    def test_get_banana_data_validate(self, mock_table_all, airtable_config_data):
+        error = "json returned from airtable is invalid"
+        mock_table_all.side_effect = "this is not okay"
         airtable = Airtable(airtable_config_data)
-        with pytest.raises(Exception):
+        with pytest.raises(Exception, match=error):
             airtable.get_banana_data()
 
     def test_get_differences_no_data(self, airtable_config_data):
@@ -34,7 +39,12 @@ class TestAirtable:
         with pytest.raises(Exception, match=error):
             airtable.get_differences()
 
-    def test_get_differences_no_backups(self, tmp_path, airtable_config_data, airtable_data):
+    def test_get_differences_no_backups(
+            self,
+            tmp_path,
+            airtable_config_data,
+            airtable_data
+    ):
         airtable_config_data["AIRTABLE_BACKUP_DIR"] = tmp_path
         airtable = Airtable(airtable_config_data)
         airtable.banana_data = airtable_data
