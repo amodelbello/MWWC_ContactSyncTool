@@ -229,6 +229,14 @@ def airtable_data_with_change():
 
 
 @pytest.fixture
+def action_network_config_data():
+    return {
+        "ACTION_NETWORK_API_KEY": "api_key",
+        "ACTION_NETWORK_BASE_URL": "base_url",
+    }
+
+
+@pytest.fixture
 def action_network_people():
     return {
         "_links": {
