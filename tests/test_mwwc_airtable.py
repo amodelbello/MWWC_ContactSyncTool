@@ -69,7 +69,6 @@ class TestAirtable:
         airtable.banana_data = airtable_data
         differences = airtable.get_differences()
 
-        # TODO: This will change when the logic is written
         assert differences is None
 
     def test_get_differences_with_deletion(
