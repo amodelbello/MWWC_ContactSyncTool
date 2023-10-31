@@ -1,4 +1,15 @@
+import requests
 import pytest
+from unittest import mock
+import mwwc_action_network
+
+
+@pytest.fixture
+def config_data():
+    return {
+        "ACTION_NETWORK_API_KEY": "api_key",
+        "ACTION_NETWORK_BASE_URL": "base_url",
+    }
 
 
 @pytest.fixture
