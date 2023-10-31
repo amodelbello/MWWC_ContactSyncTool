@@ -55,8 +55,8 @@ class TestAirtable:
             self, tmp_path, airtable_config_data, airtable_data
     ):
         # TODO: Make this cleaner, fixtures?
-        create_airtable_file(tmp_path, "one.json", airtable_data)
-        create_airtable_file(tmp_path, "two.json", airtable_data)
+        create_airtable_file(tmp_path, "2023-2-26 01:28:03.097417.json", airtable_data)
+        create_airtable_file(tmp_path, "2023-10-26 01:28:03.097417.json", airtable_data)
 
         airtable_config_data["AIRTABLE_BACKUP_DIR"] = tmp_path
         airtable = Airtable(airtable_config_data)
@@ -73,8 +73,8 @@ class TestAirtable:
             airtable_data,
             airtable_data_with_deletion,
     ):
-        create_airtable_file(tmp_path, "00.json", airtable_data)
-        create_airtable_file(tmp_path, "000.json", airtable_data)
+        create_airtable_file(tmp_path, "2023-2-26 01:28:03.097417.json", airtable_data)
+        create_airtable_file(tmp_path, "2023-10-26 01:28:03.097417.json", airtable_data)
 
         airtable_config_data["AIRTABLE_BACKUP_DIR"] = tmp_path
         airtable = Airtable(airtable_config_data)
@@ -92,8 +92,8 @@ class TestAirtable:
             airtable_data,
             airtable_data_with_addition,
     ):
-        create_airtable_file(tmp_path, "00.json", airtable_data)
-        create_airtable_file(tmp_path, "000.json", airtable_data)
+        create_airtable_file(tmp_path, "2023-2-26 01:28:03.097417.json", airtable_data)
+        create_airtable_file(tmp_path, "2023-10-26 01:28:03.097417.json", airtable_data)
 
         airtable_config_data["AIRTABLE_BACKUP_DIR"] = tmp_path
         airtable = Airtable(airtable_config_data)
@@ -111,8 +111,8 @@ class TestAirtable:
             airtable_data,
             airtable_data_with_change,
     ):
-        create_airtable_file(tmp_path, "00.json", airtable_data)
-        create_airtable_file(tmp_path, "000.json", airtable_data)
+        create_airtable_file(tmp_path, "2023-2-26 01:28:03.097417.json", airtable_data)
+        create_airtable_file(tmp_path, "2023-10-26 01:28:03.097417.json", airtable_data)
 
         airtable_config_data["AIRTABLE_BACKUP_DIR"] = tmp_path
         airtable = Airtable(airtable_config_data)

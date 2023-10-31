@@ -1,12 +1,12 @@
 import os
 import json
-import glob
 from pathlib import Path
 from datetime import datetime
 from pyairtable import Table
 from jsonschema import validate
 
 BACKUP_DIR = Path(__file__).parent / "airtable_backups"
+def DATETIME_SORT_KEY(date): return datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f.json')
 
 
 class Airtable:
@@ -128,7 +128,9 @@ class Airtable:
 
         # FIXME: make sure this is sorting correctly, i.e. the dates and times
         filenames_sorted_desc = sorted(
-            os.listdir(self.backup_dir), reverse=True
+            os.listdir(self.backup_dir),
+            reverse=True,
+            key=DATETIME_SORT_KEY,
         )
 
         new_filename = self.backup_dir / filenames_sorted_desc[0]
@@ -151,8 +153,12 @@ class Airtable:
             Airtable.write_backup_file(new_filename, file_text)
         else:
             # FIXME: make sure this is sorting correctly, i.e. `key=os.path.getctime`
-            latest_backup_filename = self.backup_dir / max(os.listdir(self.backup_dir))
-            latest_backup_text = Airtable.read_backup_file(latest_backup_filename)
+            latest_backup_filename = max(
+                os.listdir(self.backup_dir),
+                key=DATETIME_SORT_KEY,
+            )
+            latest_backup_path = self.backup_dir / latest_backup_filename
+            latest_backup_text = Airtable.read_backup_file(latest_backup_path)
 
             if latest_backup_text != file_text:
                 self.has_differences = True
