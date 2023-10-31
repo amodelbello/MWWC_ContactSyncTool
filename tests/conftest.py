@@ -1,4 +1,5 @@
 import pytest
+import json
 
 
 @pytest.fixture
@@ -74,6 +75,24 @@ def airtable_data():
             "id": "recmxWtPfPbbfZN0v",
         },
     ]
+
+
+@pytest.fixture
+def create_airtable_files(tmp_path, airtable_data):
+    def create_files(
+        names="2023-10-26 01:28:03.097417.json",
+        tmp_path=tmp_path,
+        data=airtable_data,
+    ):
+        if not isinstance(names, list):
+            names = [names]
+
+        for name in names:
+            file = tmp_path / name
+            text = json.dumps(data)
+            file.write_text(text)
+
+    return create_files
 
 
 @pytest.fixture
