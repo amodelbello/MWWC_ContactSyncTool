@@ -6,23 +6,12 @@ from datetime import datetime
 from pyairtable import Table
 from jsonschema import validate
 
-BACKUP_DIR = f"{Path(__file__).parent}/airtable_backups"
+BACKUP_DIR = Path(__file__).parent / "airtable_backups"
 
 
 class Airtable:
-    has_differences = False
-
-    # Latest data from Airtable
-    banana_data = None
-
-    # Newest backup file
-    new_banana_data = {}
-
-    # Second newest backup file
-    old_banana_data = {}
-
-    def get_banana_data(self, c):
-        fields = [
+    def __init__(self, c):
+        self.fields = [
             c["AIRTABLE_CHOSEN_FIRST_NAME"],
             c["AIRTABLE_CHOSEN_LAST_NAME"],
             c["AIRTABLE_BU_STATUS"],
@@ -35,15 +24,30 @@ class Airtable:
             c["AIRTABLE_NON_BU_ASSOCIATE"],
         ]
 
-        banana_table = Table(
+        self.banana_table = Table(
             c["AIRTABLE_API_KEY"],
             c["AIRTABLE_BASE_ID"],
             c["AIRTABLE_TABLE_ID"],
         )
 
+        self.view_id = c["AIRTABLE_VIEW_ID"]
+        self.backup_dir = c.get("AIRTABLE_BACKUP_DIR", BACKUP_DIR)
+
+    has_differences = False
+
+    # Latest data from Airtable
+    banana_data = None
+
+    # Newest backup file
+    new_banana_data = {}
+
+    # Second newest backup file
+    old_banana_data = {}
+
+    def get_banana_data(self):
         try:
-            self.banana_data = banana_table.all(
-                view=c["AIRTABLE_VIEW_ID"], fields=fields
+            self.banana_data = self.banana_table.all(
+                view=self.view_id, fields=self.fields
             )
         except Exception as e:
             raise ValueError(f"Error getting data from airtable: {e}")
@@ -122,15 +126,17 @@ class Airtable:
             print("There are no updates to Airtable.")
             return None
 
+        # FIXME: make sure this is sorting correctly, i.e. the dates and times
         filenames_sorted_desc = sorted(
-            glob.glob(BACKUP_DIR + "/*"), key=os.path.getctime, reverse=True
+            os.listdir(self.backup_dir), reverse=True
         )
-        new_filename = filenames_sorted_desc[0]
+
+        new_filename = self.backup_dir / filenames_sorted_desc[0]
         new_data = Airtable.banana_list_to_dict(
             json.loads(Airtable.read_backup_file(new_filename))
         )
 
-        old_filename = filenames_sorted_desc[1]
+        old_filename = self.backup_dir / filenames_sorted_desc[1]
         backup_data = Airtable.banana_list_to_dict(
             json.loads(Airtable.read_backup_file(old_filename))
         )
@@ -138,15 +144,14 @@ class Airtable:
         return self._calc_differences(new_data, backup_data)
 
     def _write_latest_banana_data_to_file(self):
-        new_filename = f"{BACKUP_DIR}/{datetime.utcnow()}.json"
+        new_filename = f"{self.backup_dir}/{datetime.utcnow()}.json"
         file_text = json.dumps(self.banana_data)
 
-        if len(os.listdir(BACKUP_DIR)) < 2:  # The .keep file will be in there
+        if len(os.listdir(self.backup_dir)) < 2:  # The .keep file will be in there
             Airtable.write_backup_file(new_filename, file_text)
         else:
-            latest_backup_filename = max(
-                glob.glob(BACKUP_DIR + "/*"), key=os.path.getctime
-            )
+            # FIXME: make sure this is sorting correctly, i.e. `key=os.path.getctime`
+            latest_backup_filename = self.backup_dir / max(os.listdir(self.backup_dir))
             latest_backup_text = Airtable.read_backup_file(latest_backup_filename)
 
             if latest_backup_text != file_text:

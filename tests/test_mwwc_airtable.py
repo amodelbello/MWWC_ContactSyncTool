@@ -1,177 +1,123 @@
-import sys
-import os
-import glob
 import json
 import pytest
-from pytest import MonkeyPatch
-from pyairtable import Table
+from unittest.mock import patch
 from mwwc_airtable import Airtable
 
-sys.path.append("...")
 
-config_fixture = {
-    "AIRTABLE_API_KEY": "api_key",
-    "AIRTABLE_BASE_ID": "base_id",
-    "AIRTABLE_TABLE_ID": "table_id",
-    "AIRTABLE_VIEW_ID": "view_id",
-    "AIRTABLE_CHOSEN_FIRST_NAME": "first_name",
-    "AIRTABLE_CHOSEN_LAST_NAME": "last_name",
-    "AIRTABLE_BU_STATUS": "bu_status",
-    "AIRTABLE_AREA": "area",
-    "AIRTABLE_MIGS": "MIGS?",
-    "AIRTABLE_STEWARD": "steward",
-    "AIRTABLE_ELECTED_POSITION": "elected_position",
-    "AIRTABLE_PERSONAL_EMAIL": "personal_email",
-}
+def create_airtable_file(tmp_path, name, data):
+    file = tmp_path / name
+    text = json.dumps(data)
+    file.write_text(text)
 
 
 class TestAirtable:
-    def setUp(self, old_file="old_file", new_file="new_file"):
-        self.old_file = old_file
-        self.new_file = new_file
-        self.file_names = [old_file, new_file]
-        self.mock_files = {}
-
-        self.monkeypatch = MonkeyPatch()
-        self.glob_func = glob.glob
-        self.listdir_func = os.listdir
-        self.getctime_func = os.path.getctime
-        self.monkeypatch.setattr(glob, "glob", lambda _: self.file_names)
-        self.monkeypatch.setattr(os, "listdir", lambda _: self.file_names)
-        self.monkeypatch.setattr(os.path, "getctime", lambda _: "key")
-        self.monkeypatch.setattr(Airtable, "write_backup_file", lambda f, d: None)
-        self.monkeypatch.setattr(
-            Airtable, "read_backup_file", lambda f: self.mock_files.get(f, {})
-        )
-
-    def tearDown(self):
-        self.monkeypatch.setattr(glob, "glob", self.glob_func)
-        self.monkeypatch.setattr(os, "listdir", self.listdir_func)
-        self.monkeypatch.setattr(os.path, "getctime", self.getctime_func)
-
-    @pytest.mark.skip(reason="Something is wrong with the mocking")
-    def test_get_banana_data_okay(self, airtable_data):
-        self.setUp()
-
-        def mockreturn(*args, **kwargs):
-            return airtable_data
-
-        self.monkeypatch.setattr(Table, "all", mockreturn)
-        airtable = Airtable()
-        airtable.get_banana_data(config_fixture)
+    @patch('pyairtable.Table.all')
+    def test_get_banana_data_okay(self, mock_table_all, airtable_config_data, airtable_data):
+        mock_table_all.side_effect = [airtable_data]
+        airtable = Airtable(airtable_config_data)
+        airtable.get_banana_data()
         assert airtable.banana_data == airtable_data
-        self.tearDown()
 
-    @pytest.mark.skip(reason="Something is wrong with the mocking")
-    def test_get_banana_data_request(self):
-        self.setUp()
+    @patch('pyairtable.Table.all')
+    def test_get_banana_data_request(self, mock_table_all, airtable_config_data):
         error = "Something went wrong"
-
-        def mockreturn(*args, **kwargs):
-            raise Exception(error)
-
-        self.monkeypatch.setattr(Table, "all", mockreturn)
-        airtable = Airtable()
+        mock_table_all.side_effect = Exception(error)
+        airtable = Airtable(airtable_config_data)
         with pytest.raises(Exception, match=error):
-            airtable.get_banana_data(config_fixture)
-        self.tearDown()
+            airtable.get_banana_data()
 
-    def test_get_banana_data_response(self):
-        self.setUp()
+    @patch('pyairtable.Table.all')
+    def test_get_banana_data_response(self, mock_table_all, airtable_config_data):
         data = "this is not okay"
-
-        def mockreturn(*args, **kwargs):
-            return data
-
-        self.monkeypatch.setattr(Table, "all", mockreturn)
-        airtable = Airtable()
+        mock_table_all.side_effect = data
+        airtable = Airtable(airtable_config_data)
         with pytest.raises(Exception):
-            airtable.get_banana_data(config_fixture)
-        self.tearDown()
+            airtable.get_banana_data()
 
-    def test_get_differences_no_data(self):
-        self.setUp()
+    def test_get_differences_no_data(self, airtable_config_data):
         error = "Data from Airtable is missing"
 
-        airtable = Airtable()
+        airtable = Airtable(airtable_config_data)
         with pytest.raises(Exception, match=error):
             airtable.get_differences()
-        self.tearDown()
 
-    def test_get_differences_no_backups(self, airtable_data):
-        self.setUp()
-        self.file_names = ["one-file"]
-
-        airtable = Airtable()
+    def test_get_differences_no_backups(self, tmp_path, airtable_config_data, airtable_data):
+        airtable_config_data["AIRTABLE_BACKUP_DIR"] = tmp_path
+        airtable = Airtable(airtable_config_data)
         airtable.banana_data = airtable_data
 
         differences = airtable.get_differences()
 
         # TODO: This will change when the logic is written
         assert differences is None
-        self.tearDown()
 
-    def test_get_no_differences_with_backup(self, airtable_data):
-        self.setUp()
-        self.monkeypatch.setattr(
-            Airtable, "read_backup_file", lambda _: json.dumps(airtable_data)
-        )
+    def test_get_no_differences_with_backup(
+            self, tmp_path, airtable_config_data, airtable_data
+    ):
+        # TODO: Make this cleaner, fixtures?
+        create_airtable_file(tmp_path, "one.json", airtable_data)
+        create_airtable_file(tmp_path, "two.json", airtable_data)
 
-        airtable = Airtable()
+        airtable_config_data["AIRTABLE_BACKUP_DIR"] = tmp_path
+        airtable = Airtable(airtable_config_data)
         airtable.banana_data = airtable_data
         differences = airtable.get_differences()
 
         # TODO: This will change when the logic is written
         assert differences is None
-        self.tearDown()
 
     def test_get_differences_with_deletion(
-        self, airtable_data, airtable_data_with_deletion
+            self,
+            tmp_path,
+            airtable_config_data,
+            airtable_data,
+            airtable_data_with_deletion,
     ):
-        self.setUp()
-        self.mock_files = {
-            self.old_file: json.dumps(airtable_data),
-            self.new_file: json.dumps(airtable_data_with_deletion),
-        }
+        create_airtable_file(tmp_path, "00.json", airtable_data)
+        create_airtable_file(tmp_path, "000.json", airtable_data)
 
-        airtable = Airtable()
+        airtable_config_data["AIRTABLE_BACKUP_DIR"] = tmp_path
+        airtable = Airtable(airtable_config_data)
         airtable.banana_data = airtable_data_with_deletion
         differences = airtable.get_differences()
 
-        self.tearDown()
-        assert len(differences["additions"]) == 1
-        assert len(differences["deletions"]) == 0
-
-    def test_get_differences_with_addition(
-        self, airtable_data, airtable_data_with_addition
-    ):
-        self.setUp()
-        self.mock_files = {
-            self.old_file: json.dumps(airtable_data),
-            self.new_file: json.dumps(airtable_data_with_addition),
-        }
-
-        airtable = Airtable()
-        airtable.banana_data = airtable_data_with_addition
-        differences = airtable.get_differences()
-
-        self.tearDown()
+        # FIXME: this was reversed? make sure this is correct
         assert len(differences["additions"]) == 0
         assert len(differences["deletions"]) == 1
 
-    def test_get_differences_with_change(
-        self, airtable_data, airtable_data_with_change
+    def test_get_differences_with_addition(
+            self,
+            tmp_path,
+            airtable_config_data,
+            airtable_data,
+            airtable_data_with_addition,
     ):
-        self.setUp()
-        self.mock_files = {
-            self.old_file: json.dumps(airtable_data),
-            self.new_file: json.dumps(airtable_data_with_change),
-        }
+        create_airtable_file(tmp_path, "00.json", airtable_data)
+        create_airtable_file(tmp_path, "000.json", airtable_data)
 
-        airtable = Airtable()
+        airtable_config_data["AIRTABLE_BACKUP_DIR"] = tmp_path
+        airtable = Airtable(airtable_config_data)
+        airtable.banana_data = airtable_data_with_addition
+        differences = airtable.get_differences()
+
+        # FIXME: this was reversed? make sure this is correct
+        assert len(differences["additions"]) == 1
+        assert len(differences["deletions"]) == 0
+
+    def test_get_differences_with_change(
+            self,
+            tmp_path,
+            airtable_config_data,
+            airtable_data,
+            airtable_data_with_change,
+    ):
+        create_airtable_file(tmp_path, "00.json", airtable_data)
+        create_airtable_file(tmp_path, "000.json", airtable_data)
+
+        airtable_config_data["AIRTABLE_BACKUP_DIR"] = tmp_path
+        airtable = Airtable(airtable_config_data)
         airtable.banana_data = airtable_data_with_change
         differences = airtable.get_differences()
 
-        self.tearDown()
         assert len(differences["additions"]) == 1
         assert len(differences["deletions"]) == 1

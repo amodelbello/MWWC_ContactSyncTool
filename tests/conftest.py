@@ -1,14 +1,24 @@
-import requests
 import pytest
-from unittest import mock
-import mwwc_action_network
 
 
 @pytest.fixture
-def config_data():
+def airtable_config_data():
     return {
-        "ACTION_NETWORK_API_KEY": "api_key",
-        "ACTION_NETWORK_BASE_URL": "base_url",
+        "AIRTABLE_API_KEY": "api_key",
+        "AIRTABLE_BASE_ID": "base_id",
+        "AIRTABLE_TABLE_ID": "table_id",
+        "AIRTABLE_VIEW_ID": "view_id",
+        "AIRTABLE_CHOSEN_FIRST_NAME": "first_name",
+        "AIRTABLE_CHOSEN_LAST_NAME": "last_name",
+        "AIRTABLE_BU_STATUS": "bu_status",
+        "AIRTABLE_AREA": "area",
+        "AIRTABLE_MIGS": "MIGS?",
+        "AIRTABLE_STEWARD": "steward",
+        "AIRTABLE_ELECTED_POSITION": "elected_position",
+        "AIRTABLE_PERSONAL_EMAIL": "personal_email",
+        "AIRTABLE_GOOGLE_WRITE_PERMISSIONS": "write_permissions",
+        "AIRTABLE_NON_BU_ASSOCIATE": "non_bu_associate",
+        # "AIRTABLE_BACKUP_DIR": "backup_dir"
     }
 
 
