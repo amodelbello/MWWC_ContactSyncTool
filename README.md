@@ -20,5 +20,5 @@ pip install -r requirements.txt
 
 ## Run tests
 ```bash
-./run_tests.sh
+pytest
 ```
