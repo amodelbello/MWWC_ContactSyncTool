@@ -32,6 +32,7 @@ class Airtable:
 
         self.view_id = c["AIRTABLE_VIEW_ID"]
         self.backup_dir = c.get("AIRTABLE_BACKUP_DIR", BACKUP_DIR)
+        self.backup_file_list = list(filter(lambda n: n != ".keep", os.listdir(self.backup_dir)))
 
     has_differences = False
 
@@ -127,7 +128,7 @@ class Airtable:
             return None
 
         filenames_sorted_desc = sorted(
-            os.listdir(self.backup_dir),
+            self.backup_file_list,
             reverse=True,
             key=DATETIME_SORT_KEY,
         )
@@ -148,11 +149,11 @@ class Airtable:
         new_filename = f"{self.backup_dir}/{datetime.utcnow()}.json"
         file_text = json.dumps(self.banana_data)
 
-        if len(os.listdir(self.backup_dir)) < 2:  # The .keep file will be in there
+        if len(self.backup_file_list) <= 0:
             Airtable.write_backup_file(new_filename, file_text)
         else:
             latest_backup_filename = max(
-                os.listdir(self.backup_dir),
+                self.backup_file_list,
                 key=DATETIME_SORT_KEY,
             )
             latest_backup_path = self.backup_dir / latest_backup_filename

@@ -62,8 +62,8 @@ def create_app():
 
     @app.route("/scratch/airtable")
     def scratch_airtable():
-        airtable = Airtable()
-        airtable.get_banana_data(app.config)
+        airtable = Airtable(app.config)
+        airtable.get_banana_data()
         differences = airtable.get_differences()
         return jsonify(differences)
         # return jsonify(airtable.banana_data)
@@ -83,8 +83,8 @@ def create_app():
     @app.route("/scratch/google")
     def scratch_google():
         try:
-            airtable = Airtable()
-            airtable.get_banana_data(app.config)
+            airtable = Airtable(app.config)
+            airtable.get_banana_data()
             differences = airtable.get_differences()
 
             # TODO: Clean this up
