@@ -145,10 +145,10 @@ def airtable_data_with_addition():
             "fields": {
                 "Area": "Santa Fe LLC",
                 "BU Status": "Current",
-                "Chosen First Name": "aaaa1",
-                "Chosen Last Name": "bbbb1",
+                "Chosen First Name": "added",
+                "Chosen Last Name": "added",
                 "MIGS?": "Yes",
-                "Personal Email": "aaa@bbb.com",
+                "Personal Email": "added@bbb.com",
             },
             "id": "recGlxjOhq8dFY9Pj",
         },

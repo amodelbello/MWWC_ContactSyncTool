@@ -32,7 +32,7 @@ class Airtable:
 
         self.view_id = c["AIRTABLE_VIEW_ID"]
         self.backup_dir = c.get("AIRTABLE_BACKUP_DIR", BACKUP_DIR)
-        self.backup_file_list = list(filter(lambda n: n != ".keep", os.listdir(self.backup_dir)))
+        self.backup_file_list = self.get_backup_file_list()
 
     has_differences = False
 
@@ -44,6 +44,9 @@ class Airtable:
 
     # Second newest backup file
     old_banana_data = {}
+
+    def get_backup_file_list(self):
+        return list(filter(lambda n: n != ".keep", os.listdir(self.backup_dir)))
 
     def get_banana_data(self):
         try:
@@ -128,7 +131,7 @@ class Airtable:
             return None
 
         filenames_sorted_desc = sorted(
-            self.backup_file_list,
+            self.get_backup_file_list(),
             reverse=True,
             key=DATETIME_SORT_KEY,
         )
