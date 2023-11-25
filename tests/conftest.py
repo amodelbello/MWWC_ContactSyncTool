@@ -334,3 +334,58 @@ def action_network_people_bad_uuid():
             ]
         },
     }
+
+
+@pytest.fixture
+def google_groups_result():
+    return [
+        {
+            "kind": "admin#directory#group",
+            "id": "aaa96cc0179jnck",
+            "etag": "\"rRlYht8CpEbfu8xGqIMitJC3eYqrDMbj691v3wQznfg/O8PadTH_AawQ7cTGfw65K1paaa\"",
+            "email": "group1@meowwolfworkers.org",
+            "name": "All BU",
+            "directMembersCount": "171",
+            "description": "",
+            "adminCreated": True,
+        },
+        {
+            "kind": "admin#directory#group",
+            "id": "aaa96cc02bxx1s3",
+            "etag": "\"rRlYht8CpEbfu8xGqIMitJC3eYqrDMbj691v3wQznfg/09sDqOe4m6UIELDBDD_rB-dnaaa\"",
+            "email": "group2@meowwolfworkers.org",
+            "name": "Members Read",
+            "directMembersCount": "135",
+            "description": "All members in good standing",
+            "adminCreated": True,
+        },
+        {
+            "kind": "admin#directory#group",
+            "id": "aaasv4uv4bk2t4v",
+            "etag": "\"rRlYht8CpEbfu8xGqIMitJC3eYqrDMbj691v3wQznfg/nhHuBxTIEgdDbgGIZviqK8Qaaaa\"",
+            "email": "group3@meowwolfworkers.org",
+            "name": "Denver LLC",
+            "directMembersCount": "0",
+            "description": "",
+            "adminCreated": True,
+        },
+    ]
+
+
+@pytest.fixture
+def google_client(google_groups_result):
+    class MockGoogleClient:
+
+        @staticmethod
+        def groups():
+            class MockGroupsFn:
+                @staticmethod
+                def list(customer, maxResults, orderBy):
+                    class MockListFn:
+                        @staticmethod
+                        def execute():
+                            return {"groups": google_groups_result}
+                    return MockListFn()
+            return MockGroupsFn()
+
+    return MockGoogleClient()

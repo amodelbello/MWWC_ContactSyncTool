@@ -16,7 +16,11 @@ SCOPES = [
 ]
 
 
-def get_google_workspace_client():
+def get_google_workspace_client():  # pragma: no cover
+    """
+    This is google provided code to instantiate its python client
+    # TODO: Consider moving this to it's own file
+    """
     creds = None
     path = from_root() / "gcp_creds"
     token_file = path / "token.json"
